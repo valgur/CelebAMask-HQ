@@ -1,11 +1,13 @@
 ### Copyright (C) 2017 NVIDIA Corporation. All rights reserved. 
 ### Licensed under the CC BY-NC-SA 4.0 license (https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
+import functools
+
+import numpy as np
 import torch
 import torch.nn as nn
-import functools
-from torch.autograd import Variable
-import numpy as np
 import torch.nn.functional as F
+from torch.autograd import Variable
+
 
 ###############################################################################
 # Functions
@@ -130,7 +132,7 @@ class GANLoss(nn.Module):
 
 class VGGLoss(nn.Module):
     def __init__(self, gpu_ids):
-        super(VGGLoss, self).__init__()        
+        super(VGGLoss, self).__init__()
         self.vgg = Vgg19().cuda()
         self.criterion = nn.L1Loss()
         self.weights = [1.0/32, 1.0/16, 1.0/8, 1.0/4, 1.0]        
@@ -326,11 +328,11 @@ class NLayerDiscriminator(nn.Module):
         else:
             return self.model(input)        
 
-from torchvision import models
 class Vgg19(torch.nn.Module):
     def __init__(self, requires_grad=False):
         super(Vgg19, self).__init__()
-        vgg_pretrained_features = models.vgg19(pretrained=True).features
+        from torchvision.models import vgg19
+        vgg_pretrained_features = vgg19(pretrained=True).features
         self.slice1 = torch.nn.Sequential()
         self.slice2 = torch.nn.Sequential()
         self.slice3 = torch.nn.Sequential()
